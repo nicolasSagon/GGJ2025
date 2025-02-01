@@ -1,19 +1,24 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour
 {
+    public Color playerColor = Color.green;
     public float moveSpeed = 5f;
+    public float hitForce = 5f;
     public float jumpForce = 5f;
     private Vector2 moveInput;
-    private Rigidbody2D rb;
+    private Rigidbody rb;
     private bool isTouchingWallRightWall;
     private bool isTouchingWallLeftWall;
 
+    private List<GameObject> ballsInRange = new List<GameObject>();
+
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody>();
     }
 
     void Update()
@@ -49,7 +54,7 @@ public class PlayerController : MonoBehaviour
     {
         if (context.performed && Mathf.Approximately(rb.linearVelocity.y, 0))
         {
-            rb.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
+            rb.AddForce(new Vector2(0f, jumpForce), ForceMode.Impulse);
         }
     }
 
@@ -59,6 +64,42 @@ public class PlayerController : MonoBehaviour
         {
             // Perform attack logic here
             Debug.Log("Attack!");
+            // Hit all balls in range
+            foreach (GameObject ball in ballsInRange)
+            {
+                Rigidbody ballRb = ball.GetComponent<Rigidbody>();
+                if (ballRb != null)
+                {
+                    Vector2 hitVector = moveInput.normalized;
+                    if (hitVector == Vector2.zero) {
+                        // If the player is not moving, hit in the direction of the ball
+                        hitVector = new Vector2(0, 1);
+                    }
+
+                    ballRb.AddForce(hitVector * hitForce, ForceMode.Impulse);
+                    Debug.Log("Hit ball: " + ball.name);
+                    ball.GetComponent<BubbleController>().SwitchOwner(this);
+                }
+            }
+        }
+    }
+
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Ball") && !ballsInRange.Contains(other.transform.parent.gameObject))
+        {
+            ballsInRange.Add(other.transform.parent.gameObject);
+            Debug.Log("Ball entered range: " + other.transform.parent.gameObject);
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Ball") && ballsInRange.Contains(other.transform.parent.gameObject))
+        {
+            ballsInRange.Remove(other.transform.parent.gameObject);
+            Debug.Log("Ball exited range: " + other.transform.parent.gameObject);
         }
     }
 
