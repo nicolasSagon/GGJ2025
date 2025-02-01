@@ -2,12 +2,10 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
     public Color playerColor = Color.green;
-    public TextMeshProUGUI debugText;
     public StuckBar stuckBar;
     public float initialSpeed = 10f;
     private float currentSpeed;
@@ -284,7 +282,6 @@ public class PlayerController : MonoBehaviour
     }
 
     public void updateAnimator() {
-        debugText.text = "Player state = " + playerState;
         switch(playerState) {
             case PlayerState.Walking: {
                 animator.SetBool("isRunning", true);
