@@ -21,9 +21,12 @@ public class PlayerController : MonoBehaviour
 
     private List<GameObject> ballsInRange = new List<GameObject>();
 
+    private Animator animator;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -35,7 +38,7 @@ public class PlayerController : MonoBehaviour
     {
         if (playerState != PlayerState.Stuck)
         {
-            if (!isTouchingWallRightWall && !isTouchingWallLeftWall)
+            if (!isTouchingWallRightWall && !isTouchingWallLeftWall && moveInput.x != 0)
             {
                 Vector2 targetVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
                 playerState = PlayerState.Walking;
@@ -52,8 +55,17 @@ public class PlayerController : MonoBehaviour
                 Vector2 targetVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
                 playerState = PlayerState.Walking;
                 rb.linearVelocity = targetVelocity;
+            } else {
+                if (Mathf.Approximately(rb.linearVelocity.y, 0)) {
+                    if (playerState != PlayerState.Idle) {
+                        Debug.Log("Reset to idle");
+                        playerState = PlayerState.Idle;
+                    }
+                }
+                
             }
         }
+        updateAnimator();
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -211,5 +223,26 @@ public class PlayerController : MonoBehaviour
         playerState = PlayerState.Stuck;
         stuckValue = 100;
         stuckBar.UpdateStuckBar(stuckValue);
+    }
+
+    public void updateAnimator() {
+        switch(playerState) {
+            case PlayerState.Walking: {
+                animator.SetBool("isRunning", true);
+                animator.SetBool("isJumping", false);
+                break;
+            }
+            case PlayerState.Idle: {
+                animator.SetBool("isRunning", false);
+                animator.SetBool("isJumping", false);
+                break;
+            }
+            case PlayerState.Jumping: {
+                animator.SetBool("isJumping", true);
+                animator.SetBool("isRunning", false);
+                break;
+            }
+        }
+        
     }
 }
