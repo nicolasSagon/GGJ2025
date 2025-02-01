@@ -4,6 +4,7 @@ using UnityEngine;
 public class BubbleController : MonoBehaviour
 {
     private float velocity = 1f;
+    public float defaultVelocityIncrease = 5f;
     public float maxVelocity = 15f;
     public float minVelocity = 1f;
     public Vector3 minScale = new(0.25f, 0.25f, 0.25f);
@@ -38,8 +39,11 @@ public class BubbleController : MonoBehaviour
     public float GetVelocity(){
         return velocity;
     }
+    public void IncreaseVelocity(){
+        IncreaseVelocity(defaultVelocityIncrease);
+    }
 
-    public void IncreaseVelocity(float delta = 5f){
+    public void IncreaseVelocity(float delta){
         float newVelocity = velocity + delta;
         velocity = (newVelocity > maxVelocity) ? maxVelocity : newVelocity;
     }

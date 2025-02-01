@@ -9,12 +9,18 @@ public class PlayerController : MonoBehaviour
     public Color playerColor = Color.green;
     public TextMeshProUGUI debugText;
     public StuckBar stuckBar;
-    public float moveSpeed = 5f;
+    public float initialSpeed = 10f;
+    private float currentSpeed;
+    public float boostSpeed = 18f;
+    public float boostDuration = 0.05f;
     public float jumpForce = 50f;
     public int unstuckForce = 5;
     public float attackCooldown = 0.2f;
     private float lastAttackTime = -Mathf.Infinity; // Time when the last attack occurred
     private Vector2 moveInput;
+    private float lastDirection = 0; // Tracks the last movement direction (-1 for left, 1 for right, 0 for no movement)    private float lastDirectionChangeTime;
+    private float lastBoostTime = -Mathf.Infinity;
+    private bool isBoosting = false;
     private Rigidbody rb;
     private bool isTouchingWallRightWall;
     private bool isTouchingWallLeftWall;
@@ -33,6 +39,7 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
+        currentSpeed = initialSpeed;
     }
 
     void Update()
@@ -42,11 +49,16 @@ public class PlayerController : MonoBehaviour
 
     public void FixedUpdate()
     {
+        // Handle boost duration
+        if (Time.time >= lastBoostTime + boostDuration)
+        {
+            EndBoost();
+        }
         if (playerState != PlayerState.Stuck)
         {  
             if (!isTouchingWallRightWall && !isTouchingWallLeftWall && moveInput.x != 0)
             {
-                Vector2 targetVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
+                Vector2 targetVelocity = new Vector2(moveInput.x * currentSpeed, rb.linearVelocity.y);
                 if (isGrounded && !timeoutForJumpAnim) {
                     playerState = PlayerState.Walking;
                 }
@@ -54,7 +66,7 @@ public class PlayerController : MonoBehaviour
             }
             else if (isTouchingWallRightWall && moveInput.x < 0)
             {
-                Vector2 targetVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
+                Vector2 targetVelocity = new Vector2(moveInput.x * currentSpeed, rb.linearVelocity.y);
                 if (isGrounded && !timeoutForJumpAnim) {
                     playerState = PlayerState.Walking;
                 }
@@ -62,7 +74,7 @@ public class PlayerController : MonoBehaviour
             }
             else if (isTouchingWallLeftWall && moveInput.x > 0)
             {
-                Vector2 targetVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
+                Vector2 targetVelocity = new Vector2(moveInput.x * currentSpeed, rb.linearVelocity.y);
                 if (isGrounded && !timeoutForJumpAnim) {
                     playerState = PlayerState.Walking;
                 }
@@ -78,6 +90,21 @@ public class PlayerController : MonoBehaviour
 
     public void OnMove(InputAction.CallbackContext context)
     {
+        float moveX = Input.GetAxisRaw("Horizontal");
+        float currentDirection = Mathf.Sign(moveX);
+        // Check if the player has changed direction
+        if (currentDirection != 0 && currentDirection != lastDirection)
+        {
+
+            // Check if enough time has passed since the last boost
+            if (Time.time >= lastBoostTime + boostDuration)
+            {
+                StartBoost();
+            }
+            lastDirection = currentDirection; // Update the direction tracking
+            lastBoostTime = Time.time;
+        }
+
         moveInput = context.ReadValue<Vector2>();
         stuckBar.UpdateStuckBar(stuckValue);
         if (playerState == PlayerState.Stuck) {
@@ -103,6 +130,20 @@ public class PlayerController : MonoBehaviour
                 stuckBar.UpdateStuckBar(stuckValue);
             }
         }
+    }
+
+    void StartBoost()
+    {
+        isBoosting = true;
+        currentSpeed = boostSpeed;
+        Debug.Log("Speed boost activated!");
+    }
+
+    void EndBoost()
+    {
+        isBoosting = false;
+        currentSpeed = initialSpeed;
+        Debug.Log("Speed boost ended.");
     }
 
     public void OnJump(InputAction.CallbackContext context)
