@@ -7,7 +7,6 @@ public class PlayerController : MonoBehaviour
 {
     public Color playerColor = Color.green;
     public float moveSpeed = 5f;
-    public float hitForce = 5f;
     public float jumpForce = 5f;
     private Vector2 moveInput;
     private Rigidbody rb;

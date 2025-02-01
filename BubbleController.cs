@@ -36,12 +36,12 @@ public class BubbleController : MonoBehaviour
         return velocity;
     }
 
-    public void IncreaseVelocity(float delta){
+    public void IncreaseVelocity(float delta = 5f){
         float newVelocity = velocity + delta;
         velocity = (newVelocity > maxVelocity) ? maxVelocity : newVelocity;
     }
 
-    public void ReduceVelocity(float delta){
+    public void ReduceVelocity(float delta = 5f){
         float newVelocity = velocity - delta;
         velocity = (newVelocity < minVelocity) ? minVelocity : newVelocity;
     }
@@ -50,7 +50,7 @@ public class BubbleController : MonoBehaviour
         SwitchOwner(player);
         Rigidbody ballRb = GetComponent<Rigidbody>();
         ballRb.linearVelocity = Vector2.zero;
-        IncreaseVelocity(5);
+        IncreaseVelocity();
         ballRb.AddForce(direction * velocity, ForceMode.VelocityChange);
     }
 }
