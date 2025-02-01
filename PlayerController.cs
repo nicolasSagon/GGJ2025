@@ -62,7 +62,6 @@ public class PlayerController : MonoBehaviour
         if (context.performed)
         {
             // Perform attack logic here
-            Debug.Log("Attack!");
             // Hit all balls in range
             foreach (GameObject ball in ballsInRange)
             {
@@ -71,7 +70,7 @@ public class PlayerController : MonoBehaviour
                 {
                     Vector2 hitVector = moveInput.normalized;
                     if (hitVector == Vector2.zero) {
-                        // If the player is not moving, hit in the direction of the ball
+                        // If the player is not moving, hit up
                         hitVector = new Vector2(0, 1);
                     }
 
@@ -87,14 +86,22 @@ public class PlayerController : MonoBehaviour
         if (other.CompareTag("Ball") && !ballsInRange.Contains(other.transform.parent.gameObject))
         {
             ballsInRange.Add(other.transform.parent.gameObject);
-            Debug.Log("Ball entered range: " + other.transform.parent.gameObject);
         }
-        if (other.CompareTag("BallHitbox"))
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("BallHitbox"))
         {
-            if (other.transform.parent.gameObject.GetComponent<BubbleController>().GetCurrentOwner() != this && other.transform.parent.gameObject.GetComponent<BubbleController>().GetCurrentOwner() != null) {
-                Debug.Log("Ball hit: " + other.transform.parent.gameObject);
+            BubbleController ball = collision.gameObject.GetComponent<BubbleController>();
+            if (ball.GetCurrentOwner() != this && ball.GetCurrentOwner() != null) {
+                GotHit(ball);
             }
         }
+    }
+
+    void GotHit(BubbleController ball) {
+        Debug.Log("Got hit by: " + ball.name + " owned by: " + ball.GetComponent<BubbleController>().GetCurrentOwner().name);
     }
 
     void OnTriggerExit(Collider other)
@@ -102,7 +109,6 @@ public class PlayerController : MonoBehaviour
         if (other.CompareTag("Ball") && ballsInRange.Contains(other.transform.parent.gameObject))
         {
             ballsInRange.Remove(other.transform.parent.gameObject);
-            Debug.Log("Ball exited range: " + other.transform.parent.gameObject);
         }
     }
 
