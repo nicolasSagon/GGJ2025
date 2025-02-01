@@ -91,7 +91,7 @@ public class PlayerController : MonoBehaviour
         float moveX = Input.GetAxisRaw("Horizontal");
         float currentDirection = Mathf.Sign(moveX);
         // Check if the player has changed direction
-        if (currentDirection != 0 && currentDirection != lastDirection)
+        if (moveX != 0 && currentDirection != lastDirection)
         {
 
             // Check if enough time has passed since the last boost
@@ -101,6 +101,7 @@ public class PlayerController : MonoBehaviour
             }
             lastDirection = currentDirection; // Update the direction tracking
             lastBoostTime = Time.time;
+            transform.RotateAround(transform.position, transform.up, 180f);;
         }
 
         moveInput = context.ReadValue<Vector2>();
