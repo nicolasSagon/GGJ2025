@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 public class PlayerController : MonoBehaviour
 {
@@ -103,6 +104,9 @@ public class PlayerController : MonoBehaviour
             // Hit all balls in range
             foreach (GameObject ball in ballsInRange)
             {
+                if (ball.IsDestroyed() == true) {
+                    continue;
+                }
                 Rigidbody ballRb = ball.GetComponent<Rigidbody>();
                 if (ballRb != null)
                 {
