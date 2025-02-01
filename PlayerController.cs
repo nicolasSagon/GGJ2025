@@ -76,10 +76,7 @@ public class PlayerController : MonoBehaviour
                         hitVector = new Vector2(0, 1);
                     }
 
-                    //ballRb.linearVelocity = Vector2.zero; // Freeze the bubble before reapplying a new velocity
-                    //ballRb.AddForce(hitVector * hitForce, ForceMode.VelocityChange);
-                    ball.GetComponent<BubbleController>().HitBall(hitVector);
-                    ball.GetComponent<BubbleController>().SwitchOwner(this);
+                    ball.GetComponent<BubbleController>().HitBall(this, hitVector);
                 }
             }
         }

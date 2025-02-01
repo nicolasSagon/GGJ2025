@@ -19,7 +19,7 @@ public class BubbleController : MonoBehaviour
         
     }
 
-    public void SwitchOwner(PlayerController newOwner){
+    private void SwitchOwner(PlayerController newOwner){
         if (currentOwner != null) {
             Physics.IgnoreCollision(currentOwner.GetComponent<Collider>(), GetComponent<Collider>(), false);
         }
@@ -46,7 +46,8 @@ public class BubbleController : MonoBehaviour
         velocity = (newVelocity < minVelocity) ? minVelocity : newVelocity;
     }
 
-    public void HitBall(Vector2 direction){
+    public void HitBall(PlayerController player, Vector2 direction){
+        SwitchOwner(player);
         Rigidbody ballRb = GetComponent<Rigidbody>();
         ballRb.linearVelocity = Vector2.zero;
         IncreaseVelocity(5);
