@@ -48,7 +48,7 @@ public class PlayerController : MonoBehaviour
     public void FixedUpdate()
     {
         // Handle boost duration
-        if (Time.time >= lastBoostTime + boostDuration)
+        if (isBoosting && (Time.time >= lastBoostTime + boostDuration))
         {
             EndBoost();
         }
