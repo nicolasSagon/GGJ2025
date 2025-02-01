@@ -7,6 +7,7 @@ public class BubbleController : MonoBehaviour
     public float maxVelocity = 15f;
     public float minVelocity = 1f;
     private PlayerController currentOwner = null;
+    private bool merging = false;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -52,5 +53,36 @@ public class BubbleController : MonoBehaviour
         ballRb.linearVelocity = Vector2.zero;
         IncreaseVelocity();
         ballRb.AddForce(direction * velocity, ForceMode.VelocityChange);
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (GetCurrentOwner() == null) return;
+        if (collision.gameObject.CompareTag("BallHitbox"))
+        {
+            BubbleController otherBall = collision.gameObject.GetComponent<BubbleController>();
+            if (otherBall.GetCurrentOwner() == GetCurrentOwner() || otherBall.GetCurrentOwner() == null) {
+                MergeWith(otherBall);
+            }
+        }
+    }
+    void MergeWith(BubbleController otherBall){
+        // Only merge if not already merging
+        if (otherBall.isMerging() || isMerging()) return;
+        TriggerMerging();
+        otherBall.TriggerMerging();
+        Rigidbody ballRb = GetComponent<Rigidbody>();
+        ballRb.linearVelocity += otherBall.GetComponent<Rigidbody>().linearVelocity;
+        ballRb.transform.parent.gameObject.transform.localScale += otherBall.transform.parent.gameObject.transform.localScale;
+        IncreaseVelocity(otherBall.GetVelocity());
+        Destroy(otherBall.transform.parent.gameObject);
+        merging = false;
+    }
+    public void TriggerMerging(){
+        merging = true;
+    }
+
+    public bool isMerging(){
+        return merging;
     }
 }
