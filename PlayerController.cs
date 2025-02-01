@@ -2,10 +2,14 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEngine.AI;
+using System;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
     public Color playerColor = Color.green;
+    public TextMeshProUGUI debugText;
     public StuckBar stuckBar;
     public float moveSpeed = 5f;
     public float jumpForce = 50f;
@@ -18,6 +22,8 @@ public class PlayerController : MonoBehaviour
     private bool isTouchingWallLeftWall;
     private int stuckValue = 100;
     private bool isLastMoveToRight = false;
+    private bool isGrounded = false;
+    private bool timeoutForJumpAnim = false;
 
     private PlayerState playerState = PlayerState.Idle;
 
@@ -43,28 +49,30 @@ public class PlayerController : MonoBehaviour
             if (!isTouchingWallRightWall && !isTouchingWallLeftWall && moveInput.x != 0)
             {
                 Vector2 targetVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
-                playerState = PlayerState.Walking;
+                if (isGrounded && !timeoutForJumpAnim) {
+                    playerState = PlayerState.Walking;
+                }
                 rb.linearVelocity = targetVelocity;
             }
             else if (isTouchingWallRightWall && moveInput.x < 0)
             {
                 Vector2 targetVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
-                playerState = PlayerState.Walking;
+                if (isGrounded && !timeoutForJumpAnim) {
+                    playerState = PlayerState.Walking;
+                }
                 rb.linearVelocity = targetVelocity;
             }
             else if (isTouchingWallLeftWall && moveInput.x > 0)
             {
                 Vector2 targetVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
-                playerState = PlayerState.Walking;
+                if (isGrounded && !timeoutForJumpAnim) {
+                    playerState = PlayerState.Walking;
+                }
                 rb.linearVelocity = targetVelocity;
             } else {
-                if (Mathf.Approximately(rb.linearVelocity.y, 0)) {
-                    if (playerState != PlayerState.Idle) {
-                        Debug.Log("Reset to idle");
-                        playerState = PlayerState.Idle;
-                    }
+                if (isGrounded && !timeoutForJumpAnim) {
+                    playerState = PlayerState.Idle;
                 }
-                
             }
         }
         updateAnimator();
@@ -94,7 +102,6 @@ public class PlayerController : MonoBehaviour
             }
             if (stuckValue <= 0)
             {
-                playerState = PlayerState.Idle;
                 stuckBar.UpdateStuckBar(stuckValue);
             }
         }
@@ -102,11 +109,11 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (context.performed && Mathf.Approximately(rb.linearVelocity.y, 0))
+        if (context.performed && isGrounded)
         {
             playerState = PlayerState.Jumping;
-            Debug.Log("Jumping");
             rb.AddForce(new Vector2(0f, jumpForce), ForceMode.VelocityChange);
+            StartCoroutine(waitForJumpAnim());
         }
     }
 
@@ -183,19 +190,23 @@ public class PlayerController : MonoBehaviour
     private void CheckWallCollision()
     {
         float rayLength = 1f;
+        float groundRayLength = 1f;
         Vector3 position = transform.position;
         Vector3 direction = new Vector3(1, 0);
         Vector3 direction2 = new Vector3(-1, 0);
+        Vector3 directionGround = new Vector3(0, -1);
 
         RaycastHit hit;
         Physics.Raycast(position, direction, out hit, rayLength, LayerMask.GetMask("Default"));
         if (hit.collider == null)
         {
             Debug.DrawRay(position, direction * rayLength, Color.red);
+            isTouchingWallRightWall = false;
         }
         else
         {
             Debug.DrawRay(position, direction * rayLength, Color.green);
+            isTouchingWallRightWall = true;
         }
 
         RaycastHit hit2;
@@ -203,28 +214,25 @@ public class PlayerController : MonoBehaviour
         if (hit2.collider == null)
         {
             Debug.DrawRay(position, direction2 * rayLength, Color.red);
+            isTouchingWallLeftWall = false;
         }
         else
         {
             Debug.DrawRay(position, direction2 * rayLength, Color.green);
-        }
-
-        if (hit.collider != null)
-        {
-            isTouchingWallRightWall = true;
-        }
-        else
-        {
-            isTouchingWallRightWall = false;
-        }
-
-        if (hit2.collider != null)
-        {
             isTouchingWallLeftWall = true;
         }
+
+        RaycastHit hit3;
+        Physics.Raycast(position, directionGround, out hit3, groundRayLength, LayerMask.GetMask("Default"));
+        if (hit3.collider == null)
+        {
+            Debug.DrawRay(position, directionGround * groundRayLength, Color.red);
+            isGrounded = false;
+        }
         else
         {
-            isTouchingWallLeftWall = false;
+            Debug.DrawRay(position, directionGround * groundRayLength, Color.green);
+            isGrounded = true;
         }
     }
 
@@ -236,6 +244,7 @@ public class PlayerController : MonoBehaviour
     }
 
     public void updateAnimator() {
+        debugText.text = "Player state = " + playerState;
         switch(playerState) {
             case PlayerState.Walking: {
                 animator.SetBool("isRunning", true);
@@ -253,6 +262,11 @@ public class PlayerController : MonoBehaviour
                 break;
             }
         }
-        
+    }
+
+    public System.Collections.IEnumerator waitForJumpAnim() {
+        timeoutForJumpAnim = true;
+        yield return new WaitForSeconds(0.2f);
+        timeoutForJumpAnim = false;
     }
 }
