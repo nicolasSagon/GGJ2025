@@ -2,8 +2,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using UnityEngine.AI;
-using System;
 using TMPro;
 
 public class PlayerController : MonoBehaviour
@@ -45,7 +43,7 @@ public class PlayerController : MonoBehaviour
     public void FixedUpdate()
     {
         if (playerState != PlayerState.Stuck)
-        {
+        {  
             if (!isTouchingWallRightWall && !isTouchingWallLeftWall && moveInput.x != 0)
             {
                 Vector2 targetVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
@@ -148,6 +146,7 @@ public class PlayerController : MonoBehaviour
                     ball.GetComponent<BubbleController>().HitBall(this, hitVector);
                 }
             }
+            animator.SetTrigger("Attack");
             lastAttackTime = Time.time; // Update the last attack time
         }
     }
