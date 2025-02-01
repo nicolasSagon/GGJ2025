@@ -101,7 +101,7 @@ public class PlayerController : MonoBehaviour
             }
             lastDirection = currentDirection; // Update the direction tracking
             lastBoostTime = Time.time;
-            transform.RotateAround(transform.position, transform.up, 180f);;
+            transform.RotateAround(transform.position, transform.up, -180f);;
         }
 
         moveInput = context.ReadValue<Vector2>();
