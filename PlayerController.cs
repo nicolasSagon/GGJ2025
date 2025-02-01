@@ -76,8 +76,9 @@ public class PlayerController : MonoBehaviour
                         hitVector = new Vector2(0, 1);
                     }
 
-                    ballRb.AddForce(hitVector * hitForce, ForceMode.Impulse);
-                    Debug.Log("Hit ball: " + ball.name);
+                    //ballRb.linearVelocity = Vector2.zero; // Freeze the bubble before reapplying a new velocity
+                    //ballRb.AddForce(hitVector * hitForce, ForceMode.VelocityChange);
+                    ball.GetComponent<BubbleController>().HitBall(hitVector);
                     ball.GetComponent<BubbleController>().SwitchOwner(this);
                 }
             }
@@ -91,6 +92,12 @@ public class PlayerController : MonoBehaviour
         {
             ballsInRange.Add(other.transform.parent.gameObject);
             Debug.Log("Ball entered range: " + other.transform.parent.gameObject);
+        }
+        if (other.CompareTag("BallHitbox"))
+        {
+            if (other.transform.parent.gameObject.GetComponent<BubbleController>().GetCurrentOwner() != this && other.transform.parent.gameObject.GetComponent<BubbleController>().GetCurrentOwner() != null) {
+                Debug.Log("Ball hit: " + other.transform.parent.gameObject);
+            }
         }
     }
 

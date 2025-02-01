@@ -1,7 +1,11 @@
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class BubbleController : MonoBehaviour
 {
+    private float velocity = 1f;
+    public float maxVelocity = 15f;
+    public float minVelocity = 1f;
     private PlayerController currentOwner = null;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -22,5 +26,30 @@ public class BubbleController : MonoBehaviour
         currentOwner = newOwner;
         Physics.IgnoreCollision(currentOwner.GetComponent<Collider>(), GetComponent<Collider>(), true);
         gameObject.GetComponent<SkinnedMeshRenderer>().material.SetColor("_FresnelColour", newOwner.playerColor);
+    }
+
+    public PlayerController GetCurrentOwner(){
+        return currentOwner;
+    }
+
+    public float GetVelocity(){
+        return velocity;
+    }
+
+    public void IncreaseVelocity(float delta){
+        float newVelocity = velocity + delta;
+        velocity = (newVelocity > maxVelocity) ? maxVelocity : newVelocity;
+    }
+
+    public void ReduceVelocity(float delta){
+        float newVelocity = velocity - delta;
+        velocity = (newVelocity < minVelocity) ? minVelocity : newVelocity;
+    }
+
+    public void HitBall(Vector2 direction){
+        Rigidbody ballRb = GetComponent<Rigidbody>();
+        ballRb.linearVelocity = Vector2.zero;
+        IncreaseVelocity(5);
+        ballRb.AddForce(direction * velocity, ForceMode.VelocityChange);
     }
 }
