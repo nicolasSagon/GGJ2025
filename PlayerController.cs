@@ -8,8 +8,10 @@ public class PlayerController : MonoBehaviour
     public Color playerColor = Color.green;
     public StuckBar stuckBar;
     public float moveSpeed = 5f;
-    public float jumpForce = 5f;
+    public float jumpForce = 50f;
     public int unstuckForce = 5;
+    public float attackCooldown = 0.2f;
+    private float lastAttackTime = -Mathf.Infinity; // Time when the last attack occurred
     private Vector2 moveInput;
     private Rigidbody rb;
     private bool isTouchingWallRightWall;
@@ -103,7 +105,8 @@ public class PlayerController : MonoBehaviour
         if (context.performed && Mathf.Approximately(rb.linearVelocity.y, 0))
         {
             playerState = PlayerState.Jumping;
-            rb.AddForce(new Vector2(0f, jumpForce), ForceMode.Impulse);
+            Debug.Log("Jumping");
+            rb.AddForce(new Vector2(0f, jumpForce), ForceMode.VelocityChange);
         }
     }
 
@@ -111,6 +114,12 @@ public class PlayerController : MonoBehaviour
     {
         if (context.performed)
         {
+            // Check if enough time has passed since the last attack
+            if (Time.time <= lastAttackTime + attackCooldown)
+            {
+                Debug.Log("Attack on cooldown");
+                return;
+            }
             playerState = PlayerState.Attacking;
             // Perform attack logic here
             // Hit all balls in range
@@ -132,6 +141,7 @@ public class PlayerController : MonoBehaviour
                     ball.GetComponent<BubbleController>().HitBall(this, hitVector);
                 }
             }
+            lastAttackTime = Time.time; // Update the last attack time
         }
     }
 
