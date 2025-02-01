@@ -53,6 +53,15 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void OnAttack(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            // Perform attack logic here
+            Debug.Log("Attack!");
+        }
+    }
+
     private void CheckWallCollision()
     {
         float rayLength = 1f;
