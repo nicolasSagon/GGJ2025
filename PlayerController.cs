@@ -14,7 +14,6 @@ public class PlayerController : MonoBehaviour
     private bool isTouchingWallLeftWall;
 
     private List<GameObject> ballsInRange = new List<GameObject>();
-    private GameManager gameManager;
 
     void Start()
     {
