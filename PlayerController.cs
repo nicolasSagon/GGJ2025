@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
 {
     public Color playerColor = Color.green;
     public StuckBar stuckBar;
+    public float verticalRayLength = 1f, horizontalRayLength = 1f;
     public bool isLogging = false;
     public bool isStartingFacingRight = true;
     public float initialSpeed = 10f;
@@ -309,49 +310,49 @@ public class PlayerController : MonoBehaviour
 
     private void CheckWallCollision()
     {
-        float rayLength = 1f;
-        float groundRayLength = 1f;
+        float horizontalRayLength = 2f;
+        float verticalRayLength = 1f;
         Vector3 position = transform.position;
         Vector3 direction = new Vector3(1, 0);
         Vector3 direction2 = new Vector3(-1, 0);
         Vector3 directionGround = new Vector3(0, -1);
 
         RaycastHit hit;
-        Physics.Raycast(position, direction, out hit, rayLength, LayerMask.GetMask("Default"));
+        Physics.Raycast(position, direction, out hit, horizontalRayLength, LayerMask.GetMask("Default"));
         if (hit.collider == null)
         {
-            Debug.DrawRay(position, direction * rayLength, Color.red);
+            Debug.DrawRay(position, direction * horizontalRayLength, Color.red);
             isTouchingWallRightWall = false;
         }
         else
         {
-            Debug.DrawRay(position, direction * rayLength, Color.green);
+            Debug.DrawRay(position, direction * horizontalRayLength, Color.green);
             isTouchingWallRightWall = true;
         }
 
         RaycastHit hit2;
-        Physics.Raycast(position, direction2, out hit2, rayLength, LayerMask.GetMask("Default"));
+        Physics.Raycast(position, direction2, out hit2, horizontalRayLength, LayerMask.GetMask("Default"));
         if (hit2.collider == null)
         {
-            Debug.DrawRay(position, direction2 * rayLength, Color.red);
+            Debug.DrawRay(position, direction2 * horizontalRayLength, Color.red);
             isTouchingWallLeftWall = false;
         }
         else
         {
-            Debug.DrawRay(position, direction2 * rayLength, Color.green);
+            Debug.DrawRay(position, direction2 * horizontalRayLength, Color.green);
             isTouchingWallLeftWall = true;
         }
 
         RaycastHit hit3;
-        Physics.Raycast(position, directionGround, out hit3, groundRayLength, LayerMask.GetMask("Default"));
+        Physics.Raycast(position, directionGround, out hit3, verticalRayLength, LayerMask.GetMask("Default"));
         if (hit3.collider == null)
         {
-            Debug.DrawRay(position, directionGround * groundRayLength, Color.red);
+            Debug.DrawRay(position, directionGround * verticalRayLength, Color.red);
             isGrounded = false;
         }
         else
         {
-            Debug.DrawRay(position, directionGround * groundRayLength, Color.green);
+            Debug.DrawRay(position, directionGround * verticalRayLength, Color.green);
             isGrounded = true;
         }
     }
