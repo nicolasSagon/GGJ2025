@@ -48,7 +48,8 @@ public class GameManager : MonoBehaviour
         }
         InputDevice device = context.control.device;
         InputWrapper inputWrapper = new InputWrapper(device);
-        if (!joinedDevices.Contains(inputWrapper))
+        var isAlreadyPresent = joinedDevices.Any(x => x.device == device);
+        if (!isAlreadyPresent)
         {
             joinedDevices.Add(inputWrapper);
             int playerNumber = joinedDevices.Count;

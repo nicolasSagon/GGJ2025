@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
 {
     public Color playerColor = Color.green;
     public float playerHealth = 100f;
-    public StuckBar stuckBar;
+    public HealthBar healthBar;
     public float verticalRayLength = 1f, horizontalRayLength = 1f;
     public float wallJumpVerticalFactor = 0.5f, wallJumpHorizontalFactor = 2f;
     public bool isLogging = false;
@@ -34,7 +34,6 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rb;
     private bool isTouchingWallRightWall;
     private bool isTouchingWallLeftWall;
-    private int stuckValue = 100;
     private bool isLastMoveToRight = false;
     private bool isGrounded = false;
     private bool isJumping = false;
@@ -70,6 +69,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         CheckWallCollision();
+        healthBar.UpdateHealthBar(playerHealth);
     }
 
     public void FixedUpdate()

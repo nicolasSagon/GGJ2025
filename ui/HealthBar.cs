@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class StuckBar : MonoBehaviour
+public class HealthBar : MonoBehaviour
 {
     private float maxWidth = 100;
 
@@ -11,9 +11,9 @@ public class StuckBar : MonoBehaviour
         transform.sizeDelta = new Vector2(0, transform.rect.height);
     }
 
-    public void UpdateStuckBar(float stuckValue) {
+    public void UpdateHealthBar(float healthValue) {
         var transform = this.GetComponent<RectTransform>();
-        float newWidth = (stuckValue / 100) * maxWidth;
+        float newWidth = healthValue / 100 * maxWidth;
         transform.sizeDelta = new Vector2(newWidth, transform.rect.height);
     }
 
