@@ -180,13 +180,22 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (context.started && isGrounded)
+        if (context.started && (isGrounded || IsTouchingWall()))
         {
             playerState = PlayerState.Jumping;
             StartCoroutine(waitForJumpAnim());
             isJumping = true;
             jumpTimeCounter = maxJumpTime;
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce); // Apply initial jump force
+            // Apply initial jump force
+            if (IsTouchingWall() && ! isGrounded)
+            {
+                float xForce = isTouchingWallLeftWall ? jumpForce : -jumpForce;
+                rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0); // Reset y velocity for consistent jump height
+                rb.AddForce(new Vector3(xForce, jumpForce*0.5f), ForceMode.VelocityChange);
+            }
+            else {
+                rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce);
+            }
             AudioController.PlaySound(jumpSound);
         }
 
@@ -291,6 +300,10 @@ public class PlayerController : MonoBehaviour
         {
             ballsInRange.Remove(other.transform.parent.gameObject);
         }
+    }
+
+    private bool IsTouchingWall(){
+        return isTouchingWallRightWall || isTouchingWallLeftWall;
     }
 
     private void CheckWallCollision()
