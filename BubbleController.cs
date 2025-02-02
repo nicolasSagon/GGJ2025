@@ -100,7 +100,7 @@ public class BubbleController : MonoBehaviour
         otherBall.SetMerging();
         IncreaseScale(otherBall.GetScale());
         IncreaseVelocity(otherBall.GetVelocity());
-        Destroy(otherBall);
+        Destroy(otherBall.gameObject);
         UnsetMerging();
     }
 

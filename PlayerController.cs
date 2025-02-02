@@ -319,7 +319,7 @@ public class PlayerController : MonoBehaviour
         Vector3 directionGround = new Vector3(0, -1);
 
         RaycastHit hit;
-        Physics.Raycast(position, direction, out hit, horizontalRayLength, LayerMask.GetMask("Default"));
+        Physics.Raycast(position, direction, out hit, horizontalRayLength, LayerMask.GetMask("Wall"));
         if (hit.collider == null)
         {
             Debug.DrawRay(position, direction * horizontalRayLength, Color.red);
@@ -332,7 +332,7 @@ public class PlayerController : MonoBehaviour
         }
 
         RaycastHit hit2;
-        Physics.Raycast(position, direction2, out hit2, horizontalRayLength, LayerMask.GetMask("Default"));
+        Physics.Raycast(position, direction2, out hit2, horizontalRayLength, LayerMask.GetMask("Wall"));
         if (hit2.collider == null)
         {
             Debug.DrawRay(position, direction2 * horizontalRayLength, Color.red);
@@ -345,7 +345,7 @@ public class PlayerController : MonoBehaviour
         }
 
         RaycastHit hit3;
-        Physics.Raycast(position, directionGround, out hit3, verticalRayLength, LayerMask.GetMask("Default"));
+        Physics.Raycast(position, directionGround, out hit3, verticalRayLength, LayerMask.GetMask("Wall"));
         if (hit3.collider == null)
         {
             Debug.DrawRay(position, directionGround * verticalRayLength, Color.red);
