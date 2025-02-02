@@ -290,6 +290,7 @@ public class PlayerController : MonoBehaviour
     void GotHit(BubbleController ball)
     {
         Debug.Log("Got hit by: " + ball.name + " owned by: " + ball.GetComponent<BubbleController>().GetCurrentOwner().name);
+        Destroy(ball.transform.parent.gameObject);
         AudioController.PlaySound(hitSound);
         OnPlayerGetStuck();
     }
