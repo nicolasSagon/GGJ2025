@@ -27,6 +27,7 @@ public class BubbleController : MonoBehaviour
     }
 
     private void SwitchOwner(PlayerController newOwner){
+        gameObject.layer = 0;
         if (currentOwner != null) {
             Physics.IgnoreCollision(currentOwner.GetComponent<Collider>(), GetComponent<Collider>(), false);
         }
