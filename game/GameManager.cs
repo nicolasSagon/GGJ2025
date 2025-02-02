@@ -17,15 +17,16 @@ public class GameManager : MonoBehaviour
     public GameObject uiPlayer2Keyboard;
     public GameObject uiPlayer2Gamepad;
     public TextMeshProUGUI startCounter;
+    public AudioClip menu, game;
 
     private GameState gameState = GameState.GameWaitingForPlayer;
-
 
     void Start()
     {
         uiPlayer1Ready.SetActive(false);
         uiPlayer2Ready.SetActive(false);
         startCounter.gameObject.SetActive(false);
+        AudioController.PlayMusic(menu);
     }
 
     private void OnEnable()
@@ -91,6 +92,7 @@ public class GameManager : MonoBehaviour
         gameState = GameState.GameStarted;
         yield return SceneManager.LoadSceneAsync("Scene0");
         Debug.Log("Scene is loaded");
+        AudioController.PlayMusic(game);
         Debug.Log(PlayerInput.all);
         var player2 = PlayerInput.GetPlayerByIndex(0);
         var player1 = PlayerInput.GetPlayerByIndex(1);

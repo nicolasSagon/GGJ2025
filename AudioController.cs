@@ -4,8 +4,6 @@ public class AudioController : MonoBehaviour
 {
     private static AudioSource soundEffectSource;
     private static AudioSource musicSource;
-    public AudioClip menu;
-    public AudioClip game;
     public float musicVolume = 1f;
     public float effectsVolume = 1f;
 
@@ -35,7 +33,6 @@ public class AudioController : MonoBehaviour
     {
         SetMusicVolume(musicVolume);
         SetSoundVolume(effectsVolume);
-        PlayMusic(game);
     }
 
     /// <summary>
