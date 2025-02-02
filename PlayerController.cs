@@ -326,9 +326,9 @@ private IEnumerator SmoothWallJump(Vector3 targetForce)
 
     private void ApplyDamage(float damage)
     {
+        playerHealth -= damage;
         if (playerHealth > 0)
         {
-            playerHealth -= damage;
             Debug.Log("Health: " + playerHealth);
         }
         else
