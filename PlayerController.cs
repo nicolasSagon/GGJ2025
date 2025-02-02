@@ -51,7 +51,9 @@ public class PlayerController : MonoBehaviour
         if (isStartingFacingRight == false)
         {
             lastDirection = -1;
-        } else {
+        }
+        else
+        {
             lastDirection = 1;
         }
     }
@@ -70,11 +72,12 @@ public class PlayerController : MonoBehaviour
             EndBoost();
         }
         if (playerState != PlayerState.Stuck)
-        {  
+        {
             if (!isTouchingWallRightWall && !isTouchingWallLeftWall && moveInput.x != 0)
             {
                 Vector2 targetVelocity = new Vector2(moveInput.x * currentSpeed, rb.linearVelocity.y);
-                if (isGrounded && !timeoutForJumpAnim) {
+                if (isGrounded && !timeoutForJumpAnim)
+                {
                     playerState = PlayerState.Walking;
                 }
                 rb.linearVelocity = targetVelocity;
@@ -82,7 +85,8 @@ public class PlayerController : MonoBehaviour
             else if (isTouchingWallRightWall && moveInput.x < 0)
             {
                 Vector2 targetVelocity = new Vector2(moveInput.x * currentSpeed, rb.linearVelocity.y);
-                if (isGrounded && !timeoutForJumpAnim) {
+                if (isGrounded && !timeoutForJumpAnim)
+                {
                     playerState = PlayerState.Walking;
                 }
                 rb.linearVelocity = targetVelocity;
@@ -90,12 +94,16 @@ public class PlayerController : MonoBehaviour
             else if (isTouchingWallLeftWall && moveInput.x > 0)
             {
                 Vector2 targetVelocity = new Vector2(moveInput.x * currentSpeed, rb.linearVelocity.y);
-                if (isGrounded && !timeoutForJumpAnim) {
+                if (isGrounded && !timeoutForJumpAnim)
+                {
                     playerState = PlayerState.Walking;
                 }
                 rb.linearVelocity = targetVelocity;
-            } else {
-                if (isGrounded && !timeoutForJumpAnim) {
+            }
+            else
+            {
+                if (isGrounded && !timeoutForJumpAnim)
+                {
                     playerState = PlayerState.Idle;
                 }
             }
@@ -123,20 +131,30 @@ public class PlayerController : MonoBehaviour
 
         moveInput = context.ReadValue<Vector2>();
         stuckBar.UpdateStuckBar(stuckValue);
-        if (playerState == PlayerState.Stuck) {
-            if(context.started) {
-                if (moveInput.x > 0) {
+        if (playerState == PlayerState.Stuck)
+        {
+            if (context.started)
+            {
+                if (moveInput.x > 0)
+                {
                     isLastMoveToRight = true;
                     stuckValue -= unstuckForce;
-                } else if (moveInput.x < 0) {
+                }
+                else if (moveInput.x < 0)
+                {
                     isLastMoveToRight = false;
                     stuckValue -= unstuckForce;
                 }
-            } else {
-                if (moveInput.x > 0 && !isLastMoveToRight) {
+            }
+            else
+            {
+                if (moveInput.x > 0 && !isLastMoveToRight)
+                {
                     stuckValue -= unstuckForce;
                     isLastMoveToRight = true;
-                } else if (moveInput.x < 0 && isLastMoveToRight) {
+                }
+                else if (moveInput.x < 0 && isLastMoveToRight)
+                {
                     stuckValue -= unstuckForce;
                     isLastMoveToRight = false;
                 }
@@ -176,17 +194,18 @@ public class PlayerController : MonoBehaviour
         if (context.canceled)
         {
             isJumping = false;
-        }      
+        }
     }
 
-    void HandleJumping() {
+    void HandleJumping()
+    {
         if (isJumping)
         {
             // If the jump button is held, apply additional force over time
 
             if (jumpTimeCounter > 0)
             {
-                rb.linearVelocity += new Vector3(rb.linearVelocity.x, jumpForce*jumpForceFactor); // Continue applying force
+                rb.linearVelocity += new Vector3(rb.linearVelocity.x, jumpForce * jumpForceFactor); // Continue applying force
                 jumpTimeCounter -= Time.deltaTime; // Reduce the remaining jump time
             }
             else
@@ -209,12 +228,14 @@ public class PlayerController : MonoBehaviour
             playerState = PlayerState.Attacking;
             // Perform attack logic here
             // Hit all balls in range
-            if (ballsInRange.Count == 0) {
+            if (ballsInRange.Count == 0)
+            {
                 AudioController.PlaySound(missedAttackSound);
             }
             foreach (GameObject ball in ballsInRange)
             {
-                if (ball.IsDestroyed() == true) {
+                if (ball.IsDestroyed() == true)
+                {
                     continue;
                 }
                 Rigidbody ballRb = ball.GetComponent<Rigidbody>();
@@ -328,27 +349,33 @@ public class PlayerController : MonoBehaviour
         stuckBar.UpdateStuckBar(stuckValue);
     }
 
-    public void updateAnimator() {
-        switch(playerState) {
-            case PlayerState.Walking: {
-                animator.SetBool("isRunning", true);
-                animator.SetBool("isJumping", false);
-                break;
-            }
-            case PlayerState.Idle: {
-                animator.SetBool("isRunning", false);
-                animator.SetBool("isJumping", false);
-                break;
-            }
-            case PlayerState.Jumping: {
-                animator.SetBool("isJumping", true);
-                animator.SetBool("isRunning", false);
-                break;
-            }
+    public void updateAnimator()
+    {
+        switch (playerState)
+        {
+            case PlayerState.Walking:
+                {
+                    animator.SetBool("isRunning", true);
+                    animator.SetBool("isJumping", false);
+                    break;
+                }
+            case PlayerState.Idle:
+                {
+                    animator.SetBool("isRunning", false);
+                    animator.SetBool("isJumping", false);
+                    break;
+                }
+            case PlayerState.Jumping:
+                {
+                    animator.SetBool("isJumping", true);
+                    animator.SetBool("isRunning", false);
+                    break;
+                }
         }
     }
 
-    public System.Collections.IEnumerator waitForJumpAnim() {
+    public System.Collections.IEnumerator waitForJumpAnim()
+    {
         timeoutForJumpAnim = true;
         yield return new WaitForSeconds(0.2f);
         timeoutForJumpAnim = false;
