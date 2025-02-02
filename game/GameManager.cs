@@ -94,8 +94,8 @@ public class GameManager : MonoBehaviour
         Debug.Log("Scene is loaded");
         AudioController.PlayMusic(game);
         Debug.Log(PlayerInput.all);
-        var player2 = PlayerInput.GetPlayerByIndex(0);
-        var player1 = PlayerInput.GetPlayerByIndex(1);
+        var player2 = PlayerInput.GetPlayerByIndex(1);
+        var player1 = PlayerInput.GetPlayerByIndex(0);
 
         player1.user.UnpairDevices();
         var firstDevice = getFirstDevice();
