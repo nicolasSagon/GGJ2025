@@ -144,7 +144,7 @@ public class PlayerController : MonoBehaviour
         moveInput = context.ReadValue<Vector2>();
 
         // when using down input while jumping, trigger fast fall
-        if (moveInput.y < 0 && isJumping)
+        if (moveInput.y < 0 && moveInput.x < 0.1 && moveInput.x > -0.1 && isJumping)
         {
             StartFastFall();
         }
