@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     public float wallJumpVerticalFactor = 0.5f, wallJumpHorizontalFactor = 2f;
     public bool isLogging = false;
     public bool isStartingFacingRight = true;
+    private bool isFastFalling = false;
     public float initialSpeed = 10f;
     private float currentSpeed;
     public float boostSpeed = 18f;
@@ -29,6 +30,7 @@ public class PlayerController : MonoBehaviour
     private float lastDirection = 0; // Tracks the last movement direction (-1 for left, 1 for right, 0 for no movement)    private float lastDirectionChangeTime;
     private float lastBoostTime = -Mathf.Infinity;
     private bool isBoosting = false;
+    public float fastFallGravityFactor = 5f;
     private Rigidbody rb;
     private bool isTouchingWallRightWall;
     private bool isTouchingWallLeftWall;
@@ -39,6 +41,7 @@ public class PlayerController : MonoBehaviour
     private bool timeoutForJumpAnim = false;
     public float maxJumpTime = 0.25f; // Maximum time the jump button can be held
     private float jumpTimeCounter; // Tracks how long the jump button has been held
+    private Vector3 initialGravity;
 
     private PlayerState playerState = PlayerState.Idle;
 
@@ -50,6 +53,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        initialGravity = Physics.gravity;
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
         currentSpeed = initialSpeed;
@@ -71,6 +75,9 @@ public class PlayerController : MonoBehaviour
     public void FixedUpdate()
     {
         HandleJumping();
+        if (isFastFalling && isGrounded) {
+            EndFastFall();
+        }
         // Handle boost duration
         if (isBoosting && (Time.time >= lastBoostTime + boostDuration))
         {
@@ -135,40 +142,24 @@ public class PlayerController : MonoBehaviour
         }
 
         moveInput = context.ReadValue<Vector2>();
-        stuckBar.UpdateStuckBar(stuckValue);
-        if (playerState == PlayerState.Stuck)
+
+        // when using down input while jumping, trigger fast fall
+        if (moveInput.y < 0 && isJumping)
         {
-            if (context.started)
-            {
-                if (moveInput.x > 0)
-                {
-                    isLastMoveToRight = true;
-                    stuckValue -= unstuckForce;
-                }
-                else if (moveInput.x < 0)
-                {
-                    isLastMoveToRight = false;
-                    stuckValue -= unstuckForce;
-                }
-            }
-            else
-            {
-                if (moveInput.x > 0 && !isLastMoveToRight)
-                {
-                    stuckValue -= unstuckForce;
-                    isLastMoveToRight = true;
-                }
-                else if (moveInput.x < 0 && isLastMoveToRight)
-                {
-                    stuckValue -= unstuckForce;
-                    isLastMoveToRight = false;
-                }
-            }
-            if (stuckValue <= 0)
-            {
-                stuckBar.UpdateStuckBar(stuckValue);
-            }
+            StartFastFall();
         }
+    }
+
+    private void StartFastFall()
+    {
+        isFastFalling = true;
+        Physics.gravity = new Vector3(initialGravity.x, initialGravity.y*fastFallGravityFactor, initialGravity.z);
+    }
+
+    private void EndFastFall()
+    {
+        isFastFalling = false;
+        Physics.gravity = initialGravity;
     }
 
     void StartBoost()
