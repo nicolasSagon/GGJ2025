@@ -299,9 +299,12 @@ private IEnumerator SmoothWallJump(Vector3 targetForce)
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Ball") && !ballsInRange.Contains(other.transform.parent.gameObject))
-        {
-            ballsInRange.Add(other.transform.parent.gameObject);
+        
+    }
+
+    public void addBallInRange(GameObject ball) {
+        if (!ballsInRange.Contains(ball.transform.parent.gameObject)){
+            ballsInRange.Add(ball.transform.parent.gameObject);
         }
     }
 
