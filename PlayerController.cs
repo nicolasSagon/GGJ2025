@@ -3,11 +3,13 @@ using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
+using System;
 
 public class PlayerController : MonoBehaviour
 {
     public Color playerColor = Color.green;
     public StuckBar stuckBar;
+    public bool isLogging = false;
     public bool isStartingFacingRight = true;
     public float initialSpeed = 10f;
     private float currentSpeed;
@@ -101,7 +103,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        float moveX = Input.GetAxisRaw("Horizontal");
+        float moveX = context.ReadValue<Vector2>().x;
         float currentDirection = Mathf.Sign(moveX);
         // Check if the player has changed direction
         if (moveX != 0 && currentDirection != lastDirection)
@@ -114,7 +116,8 @@ public class PlayerController : MonoBehaviour
             }
             lastDirection = currentDirection; // Update the direction tracking
             lastBoostTime = Time.time;
-            transform.RotateAround(transform.position, transform.up, 180f);
+            Debug.Log("rotate direction !");
+            transform.RotateAround(transform.localPosition, transform.up, 180f);
         }
 
         moveInput = context.ReadValue<Vector2>();
