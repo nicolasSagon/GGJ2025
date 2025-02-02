@@ -4,7 +4,8 @@ public class AudioController : MonoBehaviour
 {
     private static AudioSource soundEffectSource;
     private static AudioSource musicSource;
-    public AudioClip music;
+    public AudioClip menu;
+    public AudioClip game;
     public float musicVolume = 1f;
     public float effectsVolume = 1f;
 
@@ -33,7 +34,8 @@ public class AudioController : MonoBehaviour
     private void Start()
     {
         SetMusicVolume(musicVolume);
-        PlayMusic(music);
+        SetSoundVolume(effectsVolume);
+        PlayMusic(game);
     }
 
     /// <summary>
@@ -41,7 +43,7 @@ public class AudioController : MonoBehaviour
     /// </summary>
     /// <param name="clip">The audio clip to play.</param>
     /// <param name="volume">The volume of the sound (default is 1).</param>
-    public static void PlaySound(AudioClip clip, float volume = 1f)
+    public static void PlaySound(AudioClip clip)
     {
         if (clip == null)
         {
@@ -49,7 +51,7 @@ public class AudioController : MonoBehaviour
             return;
         }
 
-        soundEffectSource.PlayOneShot(clip, volume);
+        soundEffectSource.PlayOneShot(clip);
     }
 
     /// <summary>
@@ -57,7 +59,7 @@ public class AudioController : MonoBehaviour
     /// </summary>
     /// <param name="clip">The audio clip to play.</param>
     /// <param name="volume">The volume of the music (default is 1).</param>
-    public static void PlayMusic(AudioClip clip, float volume = 1f)
+    public static void PlayMusic(AudioClip clip)
     {
         if (clip == null)
         {
@@ -72,7 +74,6 @@ public class AudioController : MonoBehaviour
         }
 
         musicSource.clip = clip;
-        musicSource.volume = volume;
         musicSource.Play();
     }
 
