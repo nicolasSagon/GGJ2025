@@ -287,8 +287,8 @@ private IEnumerator SmoothWallJump(Vector3 targetForce)
                     Vector2 hitVector = moveInput.normalized;
                     if (hitVector == Vector2.zero)
                     {
-                        // If the player is not moving, hit up
-                        hitVector = new Vector2(0, 1);
+                        // If the player is not moving, hit forward
+                        hitVector = transform.forward;
                     }
 
                     ball.GetComponent<BubbleController>().HitBall(this, hitVector);
