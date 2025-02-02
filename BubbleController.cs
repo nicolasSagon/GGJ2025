@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using UnityEditor.Callbacks;
 using UnityEngine;
 
 public class BubbleController : MonoBehaviour
@@ -13,12 +14,14 @@ public class BubbleController : MonoBehaviour
     private PlayerController currentOwner = null;
     private bool merging = false;
     private Collider fusedCollider;
+    private Rigidbody rb;
 
     public AudioClip mergeSound;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         fusedCollider = GetComponent<Collider>();
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -133,7 +136,6 @@ public class BubbleController : MonoBehaviour
             }
         }
     }
-
     public void SetMerging(){
         merging = true;
     }

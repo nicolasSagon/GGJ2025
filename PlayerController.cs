@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
     public float jumpForce = 30f;
     public float jumpForceFactor = 0.1f;
     public int unstuckForce = 5;
+    public float freezeTime = 0.1f;
     public float attackCooldown = 0.2f;
     private float lastAttackTime = -Mathf.Infinity; // Time when the last attack occurred
     private Vector2 moveInput;
@@ -271,6 +272,8 @@ private IEnumerator SmoothWallJump(Vector3 targetForce)
             if (ballsInRange.Count == 0)
             {
                 AudioController.PlaySound(missedAttackSound);
+            } else {
+                StartCoroutine(FreezePlayer());
             }
             foreach (GameObject ball in ballsInRange)
             {
@@ -297,15 +300,16 @@ private IEnumerator SmoothWallJump(Vector3 targetForce)
         }
     }
 
-
-    void OnTriggerEnter(Collider other)
-    {
-        
-    }
-
     public void addBallInRange(GameObject ball) {
         if (!ballsInRange.Contains(ball.transform.parent.gameObject)){
             ballsInRange.Add(ball.transform.parent.gameObject);
+        }
+    }
+
+    public void removeBallInRange(GameObject ball) {
+        if (ballsInRange.Contains(ball.transform.parent.gameObject))
+        {
+            ballsInRange.Remove(ball.transform.parent.gameObject);
         }
     }
 
@@ -324,7 +328,7 @@ private IEnumerator SmoothWallJump(Vector3 targetForce)
     void GotHit(BubbleController ball)
     {
         Debug.Log("Got hit by: " + ball.name + " owned by: " + ball.GetComponent<BubbleController>().GetCurrentOwner().name);
-        Destroy(ball.transform.parent.gameObject);
+        Destroy(ball.gameObject);
         AudioController.PlaySound(hitSound);
         ApplyDamage(ball.GetDamage());
     }
@@ -350,10 +354,7 @@ private IEnumerator SmoothWallJump(Vector3 targetForce)
 
     void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Ball") && ballsInRange.Contains(other.transform.parent.gameObject))
-        {
-            ballsInRange.Remove(other.transform.parent.gameObject);
-        }
+        
     }
 
     private bool IsTouchingWall(){
@@ -439,5 +440,15 @@ private IEnumerator SmoothWallJump(Vector3 targetForce)
         timeoutForJumpAnim = true;
         yield return new WaitForSeconds(0.2f);
         timeoutForJumpAnim = false;
+    }
+
+    public System.Collections.IEnumerator FreezePlayer()
+    {
+        var playerVelocity = rb.linearVelocity;
+        var playerConstraints = rb.constraints;
+        rb.constraints = RigidbodyConstraints.FreezeAll;
+        yield return new WaitForSeconds(freezeTime);
+        rb.constraints =  playerConstraints;
+        rb.linearVelocity = playerVelocity;
     }
 }

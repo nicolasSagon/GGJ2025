@@ -14,8 +14,15 @@ public class Weapon : MonoBehaviour
     {
         if (other.CompareTag("Ball"))
         {
-            Debug.Log("Trigger Bal");
             playerScript.addBallInRange(other.gameObject);
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Ball"))       
+        {
+            playerScript.removeBallInRange(other.gameObject);
         }
     }
 }
