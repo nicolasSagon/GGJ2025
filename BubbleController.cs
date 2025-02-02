@@ -33,7 +33,7 @@ public class BubbleController : MonoBehaviour
         }
         currentOwner = newOwner;
         Physics.IgnoreCollision(currentOwner.GetComponent<Collider>(), GetComponent<Collider>(), true);
-        gameObject.GetComponent<SkinnedMeshRenderer>().material.SetColor("_FresnelColour", newOwner.playerColor);
+        gameObject.GetComponent<MeshRenderer>().material.SetColor("_FresnelColour", newOwner.playerColor);
     }
 
     public PlayerController GetCurrentOwner(){
@@ -63,7 +63,7 @@ public class BubbleController : MonoBehaviour
             newScale = maxScale;
         }
         SetScale(newScale);
-        RepositionIfNecessary();
+        //RepositionIfNecessary();
     }
 
     public void ReduceScale(Vector3 delta){
