@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     public Color playerColor = Color.green;
     public StuckBar stuckBar;
     public float verticalRayLength = 1f, horizontalRayLength = 1f;
+    public float wallJumpVerticalFactor = 0.5f, wallJumpHorizontalFactor = 2f;
     public bool isLogging = false;
     public bool isStartingFacingRight = true;
     public float initialSpeed = 10f;
@@ -190,9 +191,9 @@ public class PlayerController : MonoBehaviour
             // Apply initial jump force
             if (IsTouchingWall() && ! isGrounded)
             {
-                float xForce = isTouchingWallLeftWall ? jumpForce : -jumpForce;
+                float xForceSign = isTouchingWallLeftWall ? 1 : -1;
                 rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0); // Reset y velocity for consistent jump height
-                rb.AddForce(new Vector3(xForce, jumpForce*0.5f), ForceMode.VelocityChange);
+                rb.AddForce(new Vector3(xForceSign*jumpForce*wallJumpHorizontalFactor, jumpForce*wallJumpVerticalFactor), ForceMode.VelocityChange);
             }
             else {
                 rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce);
