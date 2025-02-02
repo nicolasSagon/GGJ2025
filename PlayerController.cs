@@ -118,7 +118,6 @@ public class PlayerController : MonoBehaviour
             }
             lastDirection = currentDirection; // Update the direction tracking
             lastBoostTime = Time.time;
-            Debug.Log("rotate direction !");
             transform.RotateAround(transform.localPosition, transform.up, 180f);
         }
 
