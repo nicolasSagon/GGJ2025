@@ -21,6 +21,10 @@ public class GameManager : MonoBehaviour
 
     private GameState gameState = GameState.GameWaitingForPlayer;
 
+    void Awake() {
+        DontDestroyOnLoad(gameObject);
+    }
+
     void Start()
     {
         uiPlayer1Ready.SetActive(false);
