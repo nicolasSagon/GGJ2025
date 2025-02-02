@@ -145,14 +145,14 @@ public class BubbleController : MonoBehaviour
     }
 
     public Vector3 GetScale(){
-        return GetRigidBody().transform.parent.gameObject.transform.localScale;
+        return transform.localScale;
     }
 
     public bool IsMaxScale(){
         return GetScale() == maxScale;
     }
     public void SetScale(Vector3 scale){
-        GetRigidBody().transform.parent.gameObject.transform.localScale = scale;
+        transform.localScale = scale;
     }
     private Rigidbody GetRigidBody() {
         return GetComponent<Rigidbody>();
