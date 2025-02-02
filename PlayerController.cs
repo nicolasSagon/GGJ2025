@@ -13,7 +13,8 @@ public class PlayerController : MonoBehaviour
     private float currentSpeed;
     public float boostSpeed = 18f;
     public float boostDuration = 0.05f;
-    public float jumpForce = 50f;
+    public float jumpForce = 30f;
+    public float jumpForceFactor = 0.1f;
     public int unstuckForce = 5;
     public float attackCooldown = 0.2f;
     private float lastAttackTime = -Mathf.Infinity; // Time when the last attack occurred
@@ -27,7 +28,10 @@ public class PlayerController : MonoBehaviour
     private int stuckValue = 100;
     private bool isLastMoveToRight = false;
     private bool isGrounded = false;
+    private bool isJumping = false;
     private bool timeoutForJumpAnim = false;
+    public float maxJumpTime = 0.25f; // Maximum time the jump button can be held
+    private float jumpTimeCounter; // Tracks how long the jump button has been held
 
     private PlayerState playerState = PlayerState.Idle;
 
@@ -55,6 +59,7 @@ public class PlayerController : MonoBehaviour
 
     public void FixedUpdate()
     {
+        HandleJumping();
         // Handle boost duration
         if (isBoosting && (Time.time >= lastBoostTime + boostDuration))
         {
@@ -143,23 +148,46 @@ public class PlayerController : MonoBehaviour
     {
         isBoosting = true;
         currentSpeed = boostSpeed;
-        Debug.Log("Speed boost activated!");
     }
 
     void EndBoost()
     {
         isBoosting = false;
         currentSpeed = initialSpeed;
-        Debug.Log("Speed boost ended.");
     }
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (context.performed && isGrounded)
+        if (context.started && isGrounded)
         {
             playerState = PlayerState.Jumping;
-            rb.AddForce(new Vector2(0f, jumpForce), ForceMode.VelocityChange);
             StartCoroutine(waitForJumpAnim());
+            isJumping = true;
+            jumpTimeCounter = maxJumpTime;
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce); // Apply initial jump force
+        }
+
+        // Stop the jump when the jump button is released
+        if (context.canceled)
+        {
+            isJumping = false;
+        }      
+    }
+
+    void HandleJumping() {
+        if (isJumping)
+        {
+            // If the jump button is held, apply additional force over time
+
+            if (jumpTimeCounter > 0)
+            {
+                rb.linearVelocity += new Vector3(rb.linearVelocity.x, jumpForce*jumpForceFactor); // Continue applying force
+                jumpTimeCounter -= Time.deltaTime; // Reduce the remaining jump time
+            }
+            else
+            {
+                isJumping = false; // Stop the jump when the time runs out
+            }
         }
     }
 
