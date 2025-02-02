@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using System;
+using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
@@ -189,11 +190,14 @@ public class PlayerController : MonoBehaviour
             isJumping = true;
             jumpTimeCounter = maxJumpTime;
             // Apply initial jump force
-            if (IsTouchingWall() && ! isGrounded)
+            if (IsTouchingWall() && !isGrounded)
             {
                 float xForceSign = isTouchingWallLeftWall ? 1 : -1;
                 rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0); // Reset y velocity for consistent jump height
-                rb.AddForce(new Vector3(xForceSign*jumpForce*wallJumpHorizontalFactor, jumpForce*wallJumpVerticalFactor), ForceMode.VelocityChange);
+                Vector3 targetVelocity = new Vector3(xForceSign * jumpForce * wallJumpHorizontalFactor, jumpForce * wallJumpVerticalFactor);
+
+                // Start a coroutine to smooth the wall jump
+                StartCoroutine(SmoothWallJump(targetVelocity));
             }
             else {
                 rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce);
@@ -207,6 +211,30 @@ public class PlayerController : MonoBehaviour
             isJumping = false;
         }
     }
+private IEnumerator SmoothWallJump(Vector3 targetForce)
+{
+    float elapsedTime = 0f;
+    float wallJumpSmoothTime = 0.1f;
+    Vector3 forceApplied = Vector3.zero;
+
+    while (elapsedTime < wallJumpSmoothTime)
+    {
+        elapsedTime += Time.deltaTime;
+        float t = elapsedTime / wallJumpSmoothTime; // Normalized time (0 to 1)
+
+        // Calculate the force to apply this frame
+        Vector3 forceThisFrame = Vector3.Lerp(Vector3.zero, targetForce, t) - forceApplied;
+        rb.AddForce(forceThisFrame, ForceMode.VelocityChange);
+
+        // Track the total force applied so far
+        forceApplied += forceThisFrame;
+
+        yield return null;
+    }
+
+    // Ensure the final force is applied exactly
+    rb.AddForce(targetForce - forceApplied, ForceMode.VelocityChange);
+}
 
     void HandleJumping()
     {
