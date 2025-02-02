@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BubbleController : MonoBehaviour
 {
-    private float velocity = 1f;
+    public float baseVelocity = 1f;
     public float defaultVelocityIncrease = 5f;
     public float maxVelocity = 15f;
     public float minVelocity = 1f;
@@ -45,20 +45,20 @@ public class BubbleController : MonoBehaviour
     }
 
     public float GetVelocity(){
-        return velocity;
+        return baseVelocity;
     }
     public void IncreaseVelocity(){
         IncreaseVelocity(defaultVelocityIncrease);
     }
 
     public void IncreaseVelocity(float delta){
-        float newVelocity = velocity + delta;
-        velocity = (newVelocity > maxVelocity) ? maxVelocity : newVelocity;
+        float newVelocity = baseVelocity + delta;
+        baseVelocity = (newVelocity > maxVelocity) ? maxVelocity : newVelocity;
     }
 
     public void ReduceVelocity(float delta = 5f){
-        float newVelocity = velocity - delta;
-        velocity = (newVelocity < minVelocity) ? minVelocity : newVelocity;
+        float newVelocity = baseVelocity - delta;
+        baseVelocity = (newVelocity < minVelocity) ? minVelocity : newVelocity;
     }
 
     public void IncreaseScale(Vector3 delta){
@@ -82,7 +82,7 @@ public class BubbleController : MonoBehaviour
         SwitchOwner(player);
         GetRigidBody().linearVelocity = Vector2.zero;
         IncreaseVelocity();
-        GetRigidBody().AddForce(direction * velocity, ForceMode.VelocityChange);
+        GetRigidBody().AddForce(direction * baseVelocity, ForceMode.VelocityChange);
     }
 
     void OnCollisionEnter(Collision collision)
