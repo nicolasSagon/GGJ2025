@@ -11,12 +11,13 @@ public class BubbleController : MonoBehaviour
     public Vector3 maxScale = new(2.5f, 2.5f, 2.5f);
     private PlayerController currentOwner = null;
     private bool merging = false;
+    private Collider fusedCollider;
 
     public AudioClip mergeSound;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        fusedCollider = GetComponent<Collider>();
     }
 
     // Update is called once per frame
@@ -61,6 +62,7 @@ public class BubbleController : MonoBehaviour
             newScale = maxScale;
         }
         SetScale(newScale);
+        RepositionIfNecessary();
     }
 
     public void ReduceScale(Vector3 delta){
@@ -92,6 +94,7 @@ public class BubbleController : MonoBehaviour
     void MergeWith(BubbleController otherBall){
         // Only merge if not already merging
         if (otherBall.isMerging() || isMerging()) return;
+        if (IsMaxScale() || otherBall.IsMaxScale()) return;
         SetMerging();
         otherBall.SetMerging();
         IncreaseScale(otherBall.GetScale());
@@ -99,6 +102,36 @@ public class BubbleController : MonoBehaviour
         Destroy(otherBall.transform.parent.gameObject);
         UnsetMerging();
     }
+
+/// <summary>
+    /// Appeler cette méthode juste après la fusion pour repositionner la boule si besoin.
+    /// </summary>
+    public void RepositionIfNecessary()
+    {
+        // Récupère tous les colliders dans le voisinage de la boule
+        Collider[] nearbyColliders = Physics.OverlapSphere(transform.position, fusedCollider.bounds.extents.magnitude);
+        
+        foreach (Collider col in nearbyColliders)
+        {
+            // On ne traite que les collisions avec les murs
+            if (col.CompareTag("Wall"))
+            {
+                Vector3 direction;
+                float distance;
+                
+                // Vérifie s'il y a une pénétration entre la boule fusionnée et le mur
+                if (Physics.ComputePenetration(
+                        fusedCollider, transform.position, transform.rotation,
+                        col, col.transform.position, col.transform.rotation,
+                        out direction, out distance))
+                {
+                    // Décale la boule pour sortir du mur
+                    transform.position += direction * distance;
+                }
+            }
+        }
+    }
+
     public void SetMerging(){
         merging = true;
     }
@@ -112,6 +145,10 @@ public class BubbleController : MonoBehaviour
 
     public Vector3 GetScale(){
         return GetRigidBody().transform.parent.gameObject.transform.localScale;
+    }
+
+    public bool IsMaxScale(){
+        return GetScale() == maxScale;
     }
     public void SetScale(Vector3 scale){
         GetRigidBody().transform.parent.gameObject.transform.localScale = scale;
