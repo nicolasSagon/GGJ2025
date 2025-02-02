@@ -37,9 +37,11 @@ public class PlayerController : MonoBehaviour
 
     private PlayerState playerState = PlayerState.Idle;
 
-    private List<GameObject> ballsInRange = new List<GameObject>();
+    private List<GameObject> ballsInRange = new();
 
     private Animator animator;
+
+    public AudioClip jumpSound, attackSound, hitSound, missedAttackSound;
 
     void Start()
     {
@@ -168,6 +170,7 @@ public class PlayerController : MonoBehaviour
             isJumping = true;
             jumpTimeCounter = maxJumpTime;
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce); // Apply initial jump force
+            AudioController.PlaySound(jumpSound);
         }
 
         // Stop the jump when the jump button is released
@@ -207,6 +210,10 @@ public class PlayerController : MonoBehaviour
             playerState = PlayerState.Attacking;
             // Perform attack logic here
             // Hit all balls in range
+            if (ballsInRange.Count == 0) {
+                AudioController.PlaySound(missedAttackSound);
+                return;
+            }
             foreach (GameObject ball in ballsInRange)
             {
                 if (ball.IsDestroyed() == true) {
@@ -223,6 +230,7 @@ public class PlayerController : MonoBehaviour
                     }
 
                     ball.GetComponent<BubbleController>().HitBall(this, hitVector);
+                    AudioController.PlaySound(attackSound);
                 }
             }
             animator.SetTrigger("Attack");
@@ -254,6 +262,7 @@ public class PlayerController : MonoBehaviour
     void GotHit(BubbleController ball)
     {
         Debug.Log("Got hit by: " + ball.name + " owned by: " + ball.GetComponent<BubbleController>().GetCurrentOwner().name);
+        AudioController.PlaySound(hitSound);
         OnPlayerGetStuck();
     }
 

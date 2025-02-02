@@ -11,6 +11,8 @@ public class BubbleController : MonoBehaviour
     public Vector3 maxScale = new(2.5f, 2.5f, 2.5f);
     private PlayerController currentOwner = null;
     private bool merging = false;
+
+    public AudioClip mergeSound;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
