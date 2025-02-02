@@ -339,8 +339,8 @@ private IEnumerator SmoothWallJump(Vector3 targetForce)
 
     private void Die()
     {
-        Debug.Log("Player died");
         playerState = PlayerState.Dead;
+        GameObject.FindAnyObjectByType<RetryMenu>().FinishParty();
     }
 
     void OnTriggerExit(Collider other)
