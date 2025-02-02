@@ -211,7 +211,6 @@ public class PlayerController : MonoBehaviour
             // Hit all balls in range
             if (ballsInRange.Count == 0) {
                 AudioController.PlaySound(missedAttackSound);
-                return;
             }
             foreach (GameObject ball in ballsInRange)
             {
