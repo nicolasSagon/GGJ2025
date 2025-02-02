@@ -12,6 +12,10 @@ public class GameManager : MonoBehaviour
     private List<InputWrapper> joinedDevices = new List<InputWrapper>();
     public GameObject uiPlayer1Ready;
     public GameObject uiPlayer2Ready;
+    public GameObject uiPlayer1Keyboard;
+    public GameObject uiPlayer1Gamepad;
+    public GameObject uiPlayer2Keyboard;
+    public GameObject uiPlayer2Gamepad;
     public TextMeshProUGUI startCounter;
 
     private GameState gameState = GameState.GameWaitingForPlayer;
@@ -51,10 +55,26 @@ public class GameManager : MonoBehaviour
             Debug.Log("Player " + playerNumber + " a rejoint avec " + device.displayName);
             if (playerNumber == 1)
             {
+                if (inputWrapper.inputType == InputType.GamePad)
+                {
+                    uiPlayer1Gamepad.SetActive(true);
+                }
+                else
+                {
+                    uiPlayer1Keyboard.SetActive(true);
+                }
                 uiPlayer1Ready.SetActive(true);
             }
             else if (playerNumber == 2)
             {
+                if (inputWrapper.inputType == InputType.GamePad)
+                {
+                    uiPlayer2Gamepad.SetActive(true);
+                }
+                else
+                {
+                    uiPlayer2Keyboard.SetActive(true);
+                }
                 uiPlayer2Ready.SetActive(true);
             }
         }
