@@ -7,6 +7,7 @@ public class BubbleController : MonoBehaviour
     public float defaultVelocityIncrease = 5f;
     public float maxVelocity = 15f;
     public float minVelocity = 1f;
+    public float baseDamage=10f;
     public Vector3 minScale = new(0.25f, 0.25f, 0.25f);
     public Vector3 maxScale = new(2.5f, 2.5f, 2.5f);
     private PlayerController currentOwner = null;
@@ -156,5 +157,9 @@ public class BubbleController : MonoBehaviour
     }
     private Rigidbody GetRigidBody() {
         return GetComponent<Rigidbody>();
+    }
+
+    public float GetDamage() {
+        return transform.localScale.x*baseDamage;
     }
 }

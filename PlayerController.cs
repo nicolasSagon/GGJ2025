@@ -9,6 +9,7 @@ using System.Collections;
 public class PlayerController : MonoBehaviour
 {
     public Color playerColor = Color.green;
+    public float playerHealth = 100f;
     public StuckBar stuckBar;
     public float verticalRayLength = 1f, horizontalRayLength = 1f;
     public float wallJumpVerticalFactor = 0.5f, wallJumpHorizontalFactor = 2f;
@@ -325,7 +326,26 @@ private IEnumerator SmoothWallJump(Vector3 targetForce)
         Debug.Log("Got hit by: " + ball.name + " owned by: " + ball.GetComponent<BubbleController>().GetCurrentOwner().name);
         Destroy(ball.transform.parent.gameObject);
         AudioController.PlaySound(hitSound);
-        OnPlayerGetStuck();
+        ApplyDamage(ball.GetDamage());
+    }
+
+    private void ApplyDamage(float damage)
+    {
+        if (playerHealth > 0)
+        {
+            playerHealth -= damage;
+            Debug.Log("Health: " + playerHealth);
+        }
+        else
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        Debug.Log("Player died");
+        playerState = PlayerState.Dead;
     }
 
     void OnTriggerExit(Collider other)
@@ -387,13 +407,6 @@ private IEnumerator SmoothWallJump(Vector3 targetForce)
             Debug.DrawRay(position, directionGround * verticalRayLength, Color.green);
             isGrounded = true;
         }
-    }
-
-    public void OnPlayerGetStuck()
-    {
-        playerState = PlayerState.Stuck;
-        stuckValue = 100;
-        stuckBar.UpdateStuckBar(stuckValue);
     }
 
     public void updateAnimator()

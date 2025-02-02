@@ -3,5 +3,6 @@ public enum PlayerState {
     Walking,
     Jumping,
     Attacking,
-    Stuck
+    Stuck,
+    Dead
 }
